@@ -26,6 +26,7 @@ public class JwtProvider {
 
 
             String roles=populateAuthorities(authorities);
+            
             return Jwts.builder()
             .issuedAt(new Date())
             .expiration(new Date(new Date().getTime()+86400000))
