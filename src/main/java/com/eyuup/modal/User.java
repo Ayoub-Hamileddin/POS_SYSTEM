@@ -9,6 +9,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.Email;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -39,6 +40,11 @@ public class User {
 
  @Column(nullable = false)
  private UserRole role;
+
+ 
+ @ManyToOne
+ private Store store;
+
 
  private String phone ;
 
