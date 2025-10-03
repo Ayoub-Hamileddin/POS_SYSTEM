@@ -15,7 +15,7 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = "/auth")
+@RequestMapping("/auth")
 public class AuthController {
 
     // * dependecy injection
