@@ -2,6 +2,7 @@ package com.eyuup.service;
 
 import java.util.List;
 
+import com.eyuup.domain.StoreStatus;
 import com.eyuup.modal.Store;
 import com.eyuup.modal.User;
 import com.eyuup.payload.dto.StoreDTO;
@@ -18,9 +19,10 @@ public interface StoreService {
 
     StoreDTO updateStore(Long id,StoreDTO storeDTO);
 
-    StoreDTO deleteStore(Long id);
+    void deleteStore(Long id);
 
     StoreDTO getStoreByEmployee();   
 
+    StoreDTO moderateStore(Long id,StoreStatus status);
 
 }
