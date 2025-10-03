@@ -2,9 +2,10 @@ package com.eyuup.service.impl;
 
 import java.util.List;
 
-import org.apache.catalina.StoreManager;
+
 import org.springframework.stereotype.Service;
 
+import com.eyuup.domain.StoreStatus;
 import com.eyuup.exceptions.StoreException;
 import com.eyuup.mapper.StoreMapper;
 import com.eyuup.modal.Store;
@@ -117,14 +118,13 @@ public class StoreServiceImpl implements StoreService {
 
 
     @Override
-    public StoreDTO deleteStore(Long id) {
+    public void deleteStore(Long id) {
 
-       Store store=storeRepository.findById(id)
-       .orElseThrow(()->new StoreException("store not found"));
+       Store store= getStoreByAdmin();
 
-        storeRepository.delete(store);
+       storeRepository.delete(store);
 
-        return StoreMapper.toDTO(store);
+        
     }
 
 
@@ -140,6 +140,23 @@ public class StoreServiceImpl implements StoreService {
         return StoreMapper.toDTO(currentUser.getStore());
     }
 
+
+
+
+
+
+    @Override
+    public StoreDTO moderateStore(Long id, StoreStatus status) {
+            Store store =storeRepository.findById(id)
+            .orElseThrow(
+                ()-> new StoreException("store not found")
+            );
+            store.setStatus(status);
+           
+           Store updatedStore= storeRepository.save(store);
+
+           return StoreMapper.toDTO(updatedStore);
+    }
    
 
 
