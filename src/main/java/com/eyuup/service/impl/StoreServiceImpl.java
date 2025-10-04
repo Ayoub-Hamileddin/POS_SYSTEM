@@ -119,8 +119,15 @@ public class StoreServiceImpl implements StoreService {
 
     @Override
     public void deleteStore(Long id) {
+       User currentUser=userService.getCurrentUser();
 
-       Store store= getStoreByAdmin();
+       Store store= storeRepository.findById(id).orElseThrow(
+            ()->new StoreException("store not found")
+       );
+
+       if (!store.getStoreAdmin().getId().equals(currentUser.getId())) {
+            throw new StoreException("you're not allowed to delete this store");
+       }
 
        storeRepository.delete(store);
 

@@ -39,10 +39,9 @@ public class StoreController {
 
     
     @PostMapping
-    public ResponseEntity<StoreDTO> createStore(@RequestBody StoreDTO storeDTO,
-                                            @RequestHeader("Authorization") String jwt){
+    public ResponseEntity<StoreDTO> createStore(@RequestBody StoreDTO storeDTO){
 
-         User user=userService.getUserFromJwtToken(jwt);
+         User user=userService.getCurrentUser();
 
          return ResponseEntity.ok(storeService.createStore(storeDTO, user));
 
@@ -53,8 +52,7 @@ public class StoreController {
     @GetMapping("/{id}")
     public ResponseEntity<StoreDTO> getStoreById(
 
-        @PathVariable Long  id,
-        @RequestHeader("Authorization") String jwt){
+        @PathVariable Long  id){
 
 
          return ResponseEntity.ok(storeService.getStoreById(id));
@@ -92,14 +90,11 @@ public class StoreController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse> deleteStore(@PathVariable Long id){
-
-        ApiResponse apiResponse=new ApiResponse();
+    public ResponseEntity<Void> deleteStore(@PathVariable Long id){
+        
          storeService.deleteStore(id);
 
-         apiResponse.setMessage("store deleted successfuly");
-
-         return ResponseEntity.ok(apiResponse);
+         return ResponseEntity.noContent().build();
                                                                     
 
     }
