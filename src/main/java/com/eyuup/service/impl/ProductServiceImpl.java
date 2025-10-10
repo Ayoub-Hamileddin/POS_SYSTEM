@@ -61,7 +61,7 @@ public class ProductServiceImpl implements ProductService {
                 product.setSellingPrice(productDTO.getSellingPrice());
                 product.setBrand(productDTO.getBrand());
                 product.setImage(productDTO.getImage());
-                product.setStore(user.getStore());
+                // product.setStore(user.getStore());
 
 
         Product savedProduct=productRepository.save(product);
