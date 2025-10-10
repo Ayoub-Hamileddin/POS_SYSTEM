@@ -1,5 +1,7 @@
 package com.eyuup.mapper;
 
+import java.time.LocalDateTime;
+
 import com.eyuup.modal.Product;
 import com.eyuup.modal.Store;
 import com.eyuup.payload.dto.ProductDTO;
@@ -18,6 +20,8 @@ public class ProductMapper {
                 .image(product.getImage())
                 // .categoryId(product.getCategory().getId())
                 .storeId(product.getStore()!=null?product.getStore().getId():null)
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
 
             .build();
     }
@@ -32,6 +36,8 @@ public class ProductMapper {
                 .brand(productDTO.getBrand())
                 .image(productDTO.getImage())
                 .store(store)
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
                 // .category(productDTO.getCategoryId())
                 
         .build();
