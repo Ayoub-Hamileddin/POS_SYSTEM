@@ -1,6 +1,7 @@
 package com.eyuup.service.impl;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.springframework.stereotype.Service;
 
@@ -30,12 +31,16 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ProductDTO createProduct(ProductDTO productDTO, User user) {
 
+      
+
         Store store=storeRepository.findById(
           productDTO.getStoreId()
         ).orElseThrow(
          () -> new StoreException("store not found")
         );
-      
+        if (!Objects.equals(user.getId(), store.getStoreAdmin().getId())) {
+            throw new ProductException("You can only create a product if you are the store manager");
+        }
         
         Product product=ProductMapper.ToEntity(productDTO, store);
         Product savedProduct=productRepository.save(product);
@@ -51,6 +56,20 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductDTO udpateProduct(Long ProductId, ProductDTO productDTO, User user) {
+
+
+      //check if store is existing 
+      //to update the product must user be the owner of the store 
+      Store store=storeRepository.findById(
+          productDTO.getStoreId()
+        ).orElseThrow(
+         () -> new StoreException("store not found")
+        );
+        if (!Objects.equals(user.getId(), store.getStoreAdmin().getId())) {
+            throw new ProductException("You can only create a product if you are the store manager");
+        }
+      //end 
+
         Product product=productRepository.findById(ProductId).orElseThrow(
             ()->  new ProductException("product not found")
         );
@@ -85,7 +104,23 @@ public class ProductServiceImpl implements ProductService {
 
 
     @Override
-    public List<ProductDTO> getProductByStoreId(Long storeId) {
+    public List<ProductDTO> getProductByStoreId(Long storeId,User user) {
+      //check if store is existing 
+      //to update the product must user be the owner of the store 
+      Store store=storeRepository.findById(
+          storeId
+        ).orElseThrow(
+         () -> new StoreException("store not found")
+        );
+        if (!Objects.equals(user.getId(), store.getStoreAdmin().getId())) {
+            throw new ProductException("You can only create a product if you are the store manager");
+        }
+      //end   
+
+
+
+
+
               List<Product> products=productRepository.findByStoreId(storeId);
               return products.stream()
                               .map(ProductMapper::ToDTO)

@@ -78,7 +78,8 @@ public class ProductController {
         public ResponseEntity<List<ProductDTO>> getProductByStoreId(@PathVariable Long storeId, 
                                                                 @RequestHeader("Authorization")  String jwt)
         {
-            List<ProductDTO> productDTOs=productService.getProductByStoreId(storeId);
+            User user=userService.getUserFromJwtToken(jwt);
+            List<ProductDTO> productDTOs=productService.getProductByStoreId(storeId,user);
 
             return ResponseEntity.ok( productDTOs);
         } 

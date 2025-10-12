@@ -13,7 +13,7 @@ public interface ProductService {
 
     void deleteProduct(Long ProductId , User user);
 
-    List<ProductDTO> getProductByStoreId(Long storeId);
+    List<ProductDTO> getProductByStoreId(Long storeId, User user);
     
     List<ProductDTO> searchByKeyword(Long storeId,String keyword);
 }
