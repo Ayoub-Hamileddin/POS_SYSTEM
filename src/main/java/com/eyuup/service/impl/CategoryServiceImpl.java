@@ -39,15 +39,30 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public CategoryDTO update(Long categoryId, User user) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'update'");
+    public CategoryDTO update(Long categoryId,CategoryDTO categoryDTO, User user) throws Exception {
+
+        Category category=categoryRepository.findById(categoryId).orElseThrow(
+            ()-> new Exception("Category Not found")
+        );
+
+
+        category.setName(categoryDTO.getName());
+        category.setStore(user.getStore());
+
+
+       Category savedCategory= categoryRepository.save(category);
+       
+       return CategoryMapper.ToDTO(savedCategory);
     }
 
     @Override
-    public void delete(Long categoryId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'delete'");
+    public void delete(Long categoryId) throws Exception {
+
+      Category category=categoryRepository.findById(categoryId).orElseThrow(
+            ()-> new Exception("Category Not found")
+        );
+
+        categoryRepository.delete(category);
     }
 
 
