@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.eyuup.domain.UserRole;
+import com.eyuup.domain.CheckAuthority;
 import com.eyuup.mapper.CategoryMapper;
 import com.eyuup.modal.Category;
 import com.eyuup.modal.Store;
@@ -40,7 +40,7 @@ public class CategoryServiceImpl implements CategoryService {
                           .build();
 
 
-        checkAuthority( user , store);
+       CheckAuthority.isAuthorized(user, store);
     
         Category savedCategory =  categoryRepository.save(category)                ;
                           
@@ -72,7 +72,8 @@ public class CategoryServiceImpl implements CategoryService {
 
         category.setName(categoryDTO.getName());
 
-        checkAuthority(user, category.getStore());
+        // check authorities
+        CheckAuthority.isAuthorized(user, category.getStore());
 
        Category savedCategory= categoryRepository.save(category);
 
@@ -89,33 +90,11 @@ public class CategoryServiceImpl implements CategoryService {
         );
 
         //! check if user can delete the store
-        checkAuthority(user, category.getStore());
+        CheckAuthority.isAuthorized(user, category.getStore());
 
         categoryRepository.delete(category);
     }
-
-
-
-    private void checkAuthority(User user, Store store){
-
-        boolean isAdmin=user.getRole().equals(UserRole.ROLE_ADMIN);
-
-        boolean isManager=user.getRole().equals(UserRole.ROLE_STORE_MANAGER);
-
-        boolean isSameStore=user.equals(store.getStoreAdmin());
-
-        boolean isAuthorized= isSameStore &&  (isAdmin || isManager );
-
-
-        if (!isAuthorized)  {
-                throw new SecurityException("you are not allowed to modify this store");
-        }
-
-        
-        
-    }
-
-
+    
     
 
 }
