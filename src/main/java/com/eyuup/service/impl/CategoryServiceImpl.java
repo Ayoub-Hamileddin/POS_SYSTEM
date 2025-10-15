@@ -4,31 +4,52 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.eyuup.domain.UserRole;
 import com.eyuup.mapper.CategoryMapper;
 import com.eyuup.modal.Category;
+import com.eyuup.modal.Store;
 import com.eyuup.modal.User;
 import com.eyuup.payload.dto.CategoryDTO;
 import com.eyuup.repository.CategoryRepository;
+import com.eyuup.repository.StoreRepository;
 import com.eyuup.service.CategoryService;
+import com.eyuup.service.UserService;
 
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 public class CategoryServiceImpl implements CategoryService {
+
     private final CategoryRepository categoryRepository;
+    private final StoreRepository storeRepository;
+    private final UserService userService;
 
 
 
     @Override
-    public CategoryDTO createCategory(CategoryDTO categoryDTO, User user) {
+    public CategoryDTO createCategory(CategoryDTO categoryDTO, User user) throws Exception {
 
-        Category category=CategoryMapper.ToEntity(categoryDTO, user);
+        Store store=storeRepository.findById(categoryDTO.getStoreId()).orElseThrow(
+            () -> new Exception("Store not Found")
+        );
 
-        Category savedCategory=categoryRepository.save(category);
+        Category category=Category.builder()
+                            .name(categoryDTO.getName())
+                            .store(store)
+                          .build();
+
+
+        checkAuthority( user , store);
+    
+        Category savedCategory =  categoryRepository.save(category)                ;
+                          
+        
 
         return CategoryMapper.ToDTO(savedCategory);
     }
+
+
 
     @Override
     public List<CategoryDTO> getCategoryByStoreId(Long storeId) {
@@ -37,6 +58,9 @@ public class CategoryServiceImpl implements CategoryService {
                     .map(CategoryMapper::ToDTO)
                     .toList();
     }
+
+
+
 
     @Override
     public CategoryDTO update(Long categoryId,CategoryDTO categoryDTO, User user) throws Exception {
@@ -47,24 +71,51 @@ public class CategoryServiceImpl implements CategoryService {
 
 
         category.setName(categoryDTO.getName());
-        category.setStore(user.getStore());
 
+        checkAuthority(user, category.getStore());
 
        Category savedCategory= categoryRepository.save(category);
-       
+
        return CategoryMapper.ToDTO(savedCategory);
     }
 
+
+
     @Override
-    public void delete(Long categoryId) throws Exception {
+    public void delete(Long categoryId,User user) throws Exception {
 
       Category category=categoryRepository.findById(categoryId).orElseThrow(
             ()-> new Exception("Category Not found")
         );
 
+        //! check if user can delete the store
+        checkAuthority(user, category.getStore());
+
         categoryRepository.delete(category);
     }
 
 
+
+    private void checkAuthority(User user, Store store){
+
+        boolean isAdmin=user.getRole().equals(UserRole.ROLE_ADMIN);
+
+        boolean isManager=user.getRole().equals(UserRole.ROLE_STORE_MANAGER);
+
+        boolean isSameStore=user.equals(store.getStoreAdmin());
+
+        boolean isAuthorized= isSameStore &&  (isAdmin || isManager );
+
+
+        if (!isAuthorized)  {
+                throw new SecurityException("you are not allowed to modify this store");
+        }
+
+        
+        
+    }
+
+
+    
 
 }
