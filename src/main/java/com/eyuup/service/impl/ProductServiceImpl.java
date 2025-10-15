@@ -5,6 +5,7 @@ import java.util.Objects;
 
 import org.springframework.stereotype.Service;
 
+import com.eyuup.domain.CheckAuthority;
 import com.eyuup.exceptions.ProductException;
 import com.eyuup.exceptions.StoreException;
 import com.eyuup.mapper.ProductMapper;
@@ -38,11 +39,13 @@ public class ProductServiceImpl implements ProductService {
         ).orElseThrow(
          () -> new StoreException("store not found")
         );
-        if (!Objects.equals(user.getId(), store.getStoreAdmin().getId())) {
-            throw new ProductException("You can only create a product if you are the store manager");
-        }
         
+        //to update the product must user be a Admin or Manager of the store
+        CheckAuthority.isAuthorized(user , store);
+
+
         Product product=ProductMapper.ToEntity(productDTO, store);
+
         Product savedProduct=productRepository.save(product);
 
 
@@ -59,16 +62,21 @@ public class ProductServiceImpl implements ProductService {
 
 
       //check if store is existing 
-      //to update the product must user be the owner of the store 
+
       Store store=storeRepository.findById(
+
           productDTO.getStoreId()
+
         ).orElseThrow(
+
          () -> new StoreException("store not found")
+
         );
-        if (!Objects.equals(user.getId(), store.getStoreAdmin().getId())) {
-            throw new ProductException("You can only create a product if you are the store manager");
-        }
-      //end 
+
+
+       //to update the product must user be a Admin or Manager of the store
+        CheckAuthority.isAuthorized(user , store);
+   
 
         Product product=productRepository.findById(ProductId).orElseThrow(
             ()->  new ProductException("product not found")
@@ -80,7 +88,6 @@ public class ProductServiceImpl implements ProductService {
                 product.setSellingPrice(productDTO.getSellingPrice());
                 product.setBrand(productDTO.getBrand());
                 product.setImage(productDTO.getImage());
-                // product.setStore(user.getStore());
 
 
         Product savedProduct=productRepository.save(product);
@@ -92,9 +99,13 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public void deleteProduct(Long ProductId, User user) {
+
       Product product=productRepository.findById(ProductId).orElseThrow(
         ()->new ProductException("product not  found")
       );
+
+       //to delete the product must user be a Admin or Manager of the store
+        CheckAuthority.isAuthorized(user , product.getStore());
 
       productRepository.delete(product);
 
@@ -106,25 +117,18 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public List<ProductDTO> getProductByStoreId(Long storeId,User user) {
       //check if store is existing 
-      //to update the product must user be the owner of the store 
+       
       Store store=storeRepository.findById(
           storeId
         ).orElseThrow(
          () -> new StoreException("store not found")
         );
-        if (!Objects.equals(user.getId(), store.getStoreAdmin().getId())) {
-            throw new ProductException("You can only create a product if you are the store manager");
-        }
-      //end   
 
 
-
-
-
-              List<Product> products=productRepository.findByStoreId(storeId);
-              return products.stream()
-                              .map(ProductMapper::ToDTO)
-                              .toList();
+        List<Product> products=productRepository.findByStoreId(storeId);
+        return products.stream()
+                        .map(ProductMapper::ToDTO)
+                        .toList();
     }
 
 
@@ -137,5 +141,9 @@ public class ProductServiceImpl implements ProductService {
                         .map(ProductMapper::ToDTO)
                         .toList();
     }
+
+
+
+
 
 }
