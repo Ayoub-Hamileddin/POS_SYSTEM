@@ -18,7 +18,7 @@ public class ProductMapper {
                 .sellingPrice(product.getSellingPrice())
                 .brand(product.getBrand())
                 .image(product.getImage())
-                // .categoryId(product.getCategory().getId())
+                .categoryId(product.getCategory().getId())
                 .storeId(product.getStore()!=null?product.getStore().getId():null)
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
