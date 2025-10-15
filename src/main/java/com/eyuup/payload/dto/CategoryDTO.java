@@ -10,5 +10,5 @@ public class CategoryDTO {
 
     private String name;
     
-    private StoreDTO store;
+    private Long storeId;
 }
