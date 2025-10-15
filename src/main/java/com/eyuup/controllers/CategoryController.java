@@ -33,7 +33,7 @@ public class CategoryController {
 
         @PostMapping
         public ResponseEntity<CategoryDTO> createCategory(@RequestBody CategoryDTO categoryDTO,
-                                                                   @RequestHeader("Authorization") String jwt        )
+                                                                   @RequestHeader("Authorization") String jwt        ) throws Exception
         {
                 User user=userService.getUserFromJwtToken(jwt);
                 
@@ -43,7 +43,7 @@ public class CategoryController {
 
         
         @GetMapping("/store/{storeId}")
-        public ResponseEntity<List<CategoryDTO>> createCategory(@PathVariable("storeId") Long storeId,
+        public ResponseEntity<List<CategoryDTO>> getCategoryByStoreId(@PathVariable("storeId") Long storeId,
                                                                    @RequestHeader("Authorization") String jwt        )
         {
                 return ResponseEntity.ok(categoryService.getCategoryByStoreId(storeId));
@@ -58,14 +58,21 @@ public class CategoryController {
                 return ResponseEntity.ok(categoryService.update(categoryId,categoryDTO,user));
         }
 
+        
         @DeleteMapping("/{categoryId}")
         public ResponseEntity<ApiResponse> deleteMapping(@PathVariable("categoryId") Long categoryId,
                                                                    @RequestHeader("Authorization") String jwt        ) throws Exception
         {
             User user=userService.getUserFromJwtToken(jwt);
-            categoryService.delete(categoryId);
+
+            categoryService.delete(categoryId,user);
+
             ApiResponse apiResponse=new ApiResponse();
+
             apiResponse.setMessage("category deleted succesfuly");
+
             return ResponseEntity.ok(apiResponse);
         }
+
+        
 }
