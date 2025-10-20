@@ -7,11 +7,11 @@ import com.eyuup.payload.dto.ProductDTO;
 
 public interface ProductService {
 
-    ProductDTO createProduct(ProductDTO productDTO , User user);
+    ProductDTO createProduct(ProductDTO productDTO , User user) throws Exception;
 
-    ProductDTO udpateProduct(Long ProductId,ProductDTO productDTO , User user);
+    ProductDTO udpateProduct(Long ProductId,ProductDTO productDTO , User user) throws Exception;
 
-    void deleteProduct(Long ProductId , User user);
+    void deleteProduct(Long ProductId , User user) throws Exception;
 
     List<ProductDTO> getProductByStoreId(Long storeId, User user);
     
