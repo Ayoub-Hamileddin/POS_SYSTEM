@@ -1,7 +1,10 @@
 package com.eyuup.service.impl;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
+import com.eyuup.domain.CheckAuthority;
 import com.eyuup.mapper.BranchMapper;
 import com.eyuup.modal.Branch;
 import com.eyuup.modal.Store;
@@ -23,36 +26,44 @@ public class BranchServiceImpl implements BranchService {
 
 
     @Override
-    public BranchDTO createBranch(BranchDTO branchDTO,Long storeId,User user) throws Exception {
-            Store store=storeRepository.findById(storeId).orElseThrow(
+    public BranchDTO createBranch(BranchDTO branchDTO,User user) throws Exception {
+
+            Store store=storeRepository.findById(branchDTO.getStoreId()).orElseThrow(
                 ()->new Exception("store not found ")
             );
-            
-            Branch savedBranch=BranchMapper.toEntity(branchDTO, store, user);
 
+                CheckAuthority.isAuthorized(user, store);
+
+            Branch branch = BranchMapper.toEntity(branchDTO, store, user);
+
+            Branch savedBranch=branchRepository.save(branch);
+            
             return BranchMapper.toDTO(savedBranch, store, user);
     }
 
     @Override
-    public BranchDTO getBranchById(Long branchId,Long storeId,User user) throws Exception {
+    public BranchDTO getBranchById(Long branchId) throws Exception {
 
 
             Branch branch=branchRepository.findById(branchId).orElseThrow(
                 ()->new Exception("branch not found ")
             );
 
-           return BranchMapper.toDTO(branch,branch.getStore(),user) ;
+           return BranchMapper.toDTO(branch,branch.getStore(),branch.getManager()) ;
     }
 
     @Override
-    public BranchDTO getBranchByStoreId(Long storeId,User user) throws Exception {
+    public List<BranchDTO> getBranchByStoreId(Long storeId) throws Exception {
 
-        Branch branch=branchRepository.findyStoreId(storeId);
-        if (branch==null) {
+       List <Branch> branches=branchRepository.findByStoreId(storeId);
+        if (branches==null) {
             throw new Exception("branch not found");
         }
 
-        return BranchMapper.toDTO(branch, branch.getStore(), user);
+        return branches.stream()
+               .map(branch -> BranchMapper.toDTO(branch, branch.getStore(),branch.getManager()))
+               .toList();
+                     
 
 
     }
@@ -62,6 +73,9 @@ public class BranchServiceImpl implements BranchService {
             Branch branch=branchRepository.findById(branchId).orElseThrow(
                 ()->new Exception("branch not found ")
             );
+            
+            CheckAuthority.isAuthorized(user, branch.getStore());  
+
                 branch.setName(branchDTO.getName());
                 branch.setAddress(branchDTO.getAddress());
                 branch.setEmail(branchDTO.getEmail());
