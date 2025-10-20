@@ -1,7 +1,6 @@
 package com.eyuup.service.impl;
 
 import java.util.List;
-import java.util.Objects;
 
 import org.springframework.stereotype.Service;
 
@@ -9,10 +8,12 @@ import com.eyuup.domain.CheckAuthority;
 import com.eyuup.exceptions.ProductException;
 import com.eyuup.exceptions.StoreException;
 import com.eyuup.mapper.ProductMapper;
+import com.eyuup.modal.Category;
 import com.eyuup.modal.Product;
 import com.eyuup.modal.Store;
 import com.eyuup.modal.User;
 import com.eyuup.payload.dto.ProductDTO;
+import com.eyuup.repository.CategoryRepository;
 import com.eyuup.repository.ProductRepository;
 import com.eyuup.repository.StoreRepository;
 import com.eyuup.service.ProductService;
@@ -27,10 +28,11 @@ public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;
     private final StoreRepository storeRepository;
+    private final CategoryRepository categoryRepository;
 
 
     @Override
-    public ProductDTO createProduct(ProductDTO productDTO, User user) {
+    public ProductDTO createProduct(ProductDTO productDTO, User user) throws Exception {
 
       
 
@@ -40,11 +42,16 @@ public class ProductServiceImpl implements ProductService {
          () -> new StoreException("store not found")
         );
         
+
+        Category category=categoryRepository.findById(productDTO.getCategoryId()).orElseThrow(
+          ()-> new ProductException("category Not found")
+        );
+
         //to update the product must user be a Admin or Manager of the store
         CheckAuthority.isAuthorized(user , store);
 
 
-        Product product=ProductMapper.ToEntity(productDTO, store);
+        Product product=ProductMapper.ToEntity(productDTO, store,category);
 
         Product savedProduct=productRepository.save(product);
 
@@ -58,7 +65,7 @@ public class ProductServiceImpl implements ProductService {
 
 
     @Override
-    public ProductDTO udpateProduct(Long ProductId, ProductDTO productDTO, User user) {
+    public ProductDTO udpateProduct(Long ProductId, ProductDTO productDTO, User user) throws Exception {
 
 
       //check if store is existing 
@@ -81,6 +88,11 @@ public class ProductServiceImpl implements ProductService {
         Product product=productRepository.findById(ProductId).orElseThrow(
             ()->  new ProductException("product not found")
         );
+
+        
+
+       
+
                 product.setName(productDTO.getName());
                 product.setSku(productDTO.getSku());
                 product.setDescription(productDTO.getDescription());
@@ -88,7 +100,15 @@ public class ProductServiceImpl implements ProductService {
                 product.setSellingPrice(productDTO.getSellingPrice());
                 product.setBrand(productDTO.getBrand());
                 product.setImage(productDTO.getImage());
+                
+        if (productDTO.getCategoryId()!=null) {
+              Category category=categoryRepository.findById(productDTO.getCategoryId()).orElseThrow(
+                  ()-> new ProductException("category Not found")
+                );
 
+                product.setCategory(category);
+
+        }
 
         Product savedProduct=productRepository.save(product);
 
@@ -98,7 +118,7 @@ public class ProductServiceImpl implements ProductService {
 
 
     @Override
-    public void deleteProduct(Long ProductId, User user) {
+    public void deleteProduct(Long ProductId, User user) throws Exception {
 
       Product product=productRepository.findById(ProductId).orElseThrow(
         ()->new ProductException("product not  found")
