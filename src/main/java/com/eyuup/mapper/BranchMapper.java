@@ -1,5 +1,7 @@
 package com.eyuup.mapper;
 
+import java.time.LocalDateTime;
+
 import com.eyuup.modal.Branch;
 import com.eyuup.modal.Store;
 import com.eyuup.modal.User;
@@ -8,7 +10,7 @@ import com.eyuup.payload.dto.BranchDTO;
 
 public class BranchMapper {
 
-    public static BranchDTO toDTO(Branch branch,Store store,User user){
+    public static BranchDTO toDTO(Branch branch){
 
         return BranchDTO.builder()
             .Id(branch.getId())
@@ -21,8 +23,7 @@ public class BranchMapper {
             .openTime(branch.getOpenTime())
             .createdAt(branch.getCreatedAt())
             .updatedAt(branch.getUpdatedAt())
-            .store(StoreMapper.toDTO(store))
-            .manager(UserMapper.ToDTO(user))
+            .storeId(branch.getStore()!=null?branch.getStore().getId():null)
 
         .build();
     }
@@ -37,8 +38,8 @@ public class BranchMapper {
             .workingsDays(branchDto.getWorkingsDays())
             .closeTime(branchDto.getCloseTime())
             .openTime(branchDto.getOpenTime())
-            .createdAt(branchDto.getCreatedAt())
-            .updatedAt(branchDto.getUpdatedAt())
+            .createdAt(LocalDateTime.now())
+            .updatedAt(LocalDateTime.now())
             .store(store)
             .manager(user)
 
