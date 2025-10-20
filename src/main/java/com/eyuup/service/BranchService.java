@@ -1,16 +1,18 @@
 package com.eyuup.service;
 
+import java.util.List;
+
 import com.eyuup.modal.User;
 import com.eyuup.payload.dto.BranchDTO;
 
 public interface BranchService {
 
     
-    BranchDTO createBranch(BranchDTO branchDTO,Long storeId,User user) throws Exception;
+    BranchDTO createBranch(BranchDTO branchDTO,User user) throws Exception;
     
-    BranchDTO getBranchById(Long BranchId,Long storeId,User user) throws Exception;
+    BranchDTO getBranchById(Long BranchId) throws Exception;
 
-    BranchDTO getBranchByStoreId(Long storeId,User user) throws Exception;
+    List<BranchDTO> getBranchByStoreId(Long storeId) throws Exception;
     
     BranchDTO updateBranch(Long branchId,BranchDTO branchDTO,User user) throws Exception;
 
