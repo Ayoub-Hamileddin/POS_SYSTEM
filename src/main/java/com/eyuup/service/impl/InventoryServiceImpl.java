@@ -2,6 +2,7 @@ package com.eyuup.service.impl;
 
 import java.nio.file.AccessDeniedException;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.springframework.stereotype.Service;
 
@@ -83,7 +84,7 @@ public class InventoryServiceImpl implements InventoryService {
     }
 
     @Override
-    public InventoryDTO getInventoriesById(Long inventoryId) throws Exception {
+    public InventoryDTO getInventoryById(Long inventoryId) throws Exception {
 
         Inventory inventory=inventoryRepository.findById(inventoryId).orElseThrow(
                 ()-> new Exception("inventory not found")
@@ -93,15 +94,24 @@ public class InventoryServiceImpl implements InventoryService {
         }
 
     @Override
-    public InventoryDTO getInventoryByProductId(Long ProductId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getInventoryByProductId'");
+    public List<InventoryDTO> getInventoryByProductId(Long ProductId) throws Exception {
+         List<Inventory> inventories=inventoryRepository.findByProductId(ProductId).orElseThrow(
+                ()-> new Exception("inventory not found")
+        );   
+        return inventories.stream()
+            .map(invetory->InventoryMapper.toDTo(invetory))
+            .toList();
     }
 
     @Override
-    public InventoryDTO getInventoryByBranchId(Long BranchId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getInventoryByBranchId'");
+    public List<InventoryDTO> getInventoryByBranchId(Long BranchId) throws Exception {
+        List<Inventory> inventories=inventoryRepository.findByBranchId(BranchId).orElseThrow(
+            ()->new Exception("Inventery Not Found")
+        );
+        
+         return inventories.stream()
+            .map(invetory->InventoryMapper.toDTo(invetory))
+            .toList();
     }
 
 }
