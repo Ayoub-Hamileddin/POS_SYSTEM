@@ -35,6 +35,6 @@ public class BranchDTO {
     private Long storeId;
     private StoreDTO store;
 
-    private UserDto manager;
+    private UserDto manager; 
 
 }
