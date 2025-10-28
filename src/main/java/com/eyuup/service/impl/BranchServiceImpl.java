@@ -34,11 +34,11 @@ public class BranchServiceImpl implements BranchService {
 
                 CheckAuthority.isAuthorized(user, store);
 
-            Branch branch = BranchMapper.toEntity(branchDTO, store, user);
+            Branch branch = BranchMapper.toEntity(branchDTO, store,user);
 
             Branch savedBranch=branchRepository.save(branch);
             
-            return BranchMapper.toDTO(savedBranch, store, user);
+            return BranchMapper.toDTO(savedBranch);
     }
 
     @Override
@@ -49,11 +49,11 @@ public class BranchServiceImpl implements BranchService {
                 ()->new Exception("branch not found ")
             );
 
-           return BranchMapper.toDTO(branch,branch.getStore(),branch.getManager()) ;
+           return BranchMapper.toDTO(branch) ;
     }
 
     @Override
-    public List<BranchDTO> getBranchByStoreId(Long storeId) throws Exception {
+    public List<BranchDTO> getBranchesByStoreId(Long storeId) throws Exception {
 
        List <Branch> branches=branchRepository.findByStoreId(storeId);
         if (branches==null) {
@@ -61,7 +61,7 @@ public class BranchServiceImpl implements BranchService {
         }
 
         return branches.stream()
-               .map(branch -> BranchMapper.toDTO(branch, branch.getStore(),branch.getManager()))
+               .map(branch -> BranchMapper.toDTO(branch))
                .toList();
                      
 
@@ -87,7 +87,7 @@ public class BranchServiceImpl implements BranchService {
              Branch savedBranch=branchRepository.save(branch);
 
 
-            return BranchMapper.toDTO(savedBranch, savedBranch.getStore(), user);
+            return BranchMapper.toDTO(savedBranch);
     }
 
     @Override
