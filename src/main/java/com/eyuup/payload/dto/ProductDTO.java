@@ -2,6 +2,7 @@ package com.eyuup.payload.dto;
 
 import java.time.LocalDateTime;
 
+
 import lombok.Builder;
 import lombok.Data;
 
@@ -29,12 +30,10 @@ public class ProductDTO {
     private String brand;
 
     private String image;
-
-
     
+    private CategoryDTO category;
+
     private Long categoryId;
-
-
     
     private Long storeId;
 
