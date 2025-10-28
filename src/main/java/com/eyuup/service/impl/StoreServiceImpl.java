@@ -68,11 +68,13 @@ public class StoreServiceImpl implements StoreService {
 
 
     @Override
-    public Store getStoreByAdmin() {
+    public Store getStoreByAdmin() throws Exception {
 
         User admin=userService.getCurrentUser();
 
-        return storeRepository.findByStoreAdminId(admin.getId());
+        return storeRepository.findByStoreAdminId(admin.getId()).orElseThrow(
+            ()->new Exception("you don't have any store yet")
+        );
     }
 
 
@@ -81,11 +83,13 @@ public class StoreServiceImpl implements StoreService {
 
 
     @Override
-    public StoreDTO updateStore(Long id, StoreDTO storeDTO) {
+    public StoreDTO updateStore(Long id, StoreDTO storeDTO) throws Exception {
 
       User currentUser=userService.getCurrentUser();
 
-      Store existingStore=storeRepository.findByStoreAdminId(currentUser.getId());
+      Store existingStore=storeRepository.findByStoreAdminId(currentUser.getId()).orElseThrow(
+            ()->new Exception("you don't have any store yet")
+        );;
 
       existingStore.setBrand(storeDTO.getBrand());
       existingStore.setDescription(storeDTO.getDescription());
@@ -118,7 +122,7 @@ public class StoreServiceImpl implements StoreService {
 
 
     @Override
-    public void deleteStore(Long id) {
+    public void deleteStore(Long id) throws Exception {
 
        Store store= getStoreByAdmin();
 
