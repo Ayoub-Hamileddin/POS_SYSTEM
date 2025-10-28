@@ -15,11 +15,11 @@ public interface StoreService {
 
     List<StoreDTO> getAllStores();
 
-    Store getStoreByAdmin();
+    Store getStoreByAdmin() throws Exception;
 
-    StoreDTO updateStore(Long id,StoreDTO storeDTO);
+    StoreDTO updateStore(Long id,StoreDTO storeDTO) throws Exception;
 
-    void deleteStore(Long id);
+    void deleteStore(Long id) throws Exception;
 
     StoreDTO getStoreByEmployee();   
 
