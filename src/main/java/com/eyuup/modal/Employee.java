@@ -25,14 +25,29 @@ public class Employee {
     @Id
     @GeneratedValue
     private Long id;
+
+    private String fullName;
+
+    private String email;
+    
+    private String password;
+
+    private String phone;
+
+    private UserRole position;
+
     @OneToOne
     private User user;
+
     @ManyToOne
     private Branch branch;
-    private UserRole position;
+
     private Double salary;
+
     private  Boolean status ;
+
     private  LocalDateTime createdAt ;
+
     private  LocalDateTime updatedAt ;
 
 
