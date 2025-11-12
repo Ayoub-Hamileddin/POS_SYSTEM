@@ -4,21 +4,34 @@ import java.time.LocalDateTime;
 
 import com.eyuup.domain.UserRole;
 
+import lombok.Builder;
+import lombok.Data;
 
+
+@Data
+@Builder
 public class EmployeeDto {
     private Long id;
 
-    private BranchDTO branchDTO;
+     private String fullName;
 
-    private Long BranchId;
+    private String email;
+    
+    private String password;
+    
+    private String phone;
 
     private UserRole position;
+
+    private BranchDTO branch;
+
+    private Long BranchId;
 
     private Double salary;
 
     private  Boolean status ;
 
-    private UserDto userDto;
+    private UserDto user;
     
     private  LocalDateTime createdAt ;
 
